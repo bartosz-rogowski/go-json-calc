@@ -1,0 +1,18 @@
+{
+    "obj1": {
+        "operator": "add",
+        "value1": 2,
+        "value2": 3,
+        "value3": 4
+    },
+    "obj2": {
+        "operator": "sqrt",
+        "value1": 16,
+        "value2": 3
+    },
+    "obj3": {
+        "operator": "mul",
+        "value1": -20.2,
+        "value2": 3.5
+    }
+}
