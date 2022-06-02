@@ -76,7 +76,7 @@ func main() {
 	var data map[string]map[string]interface{}
 	json.Unmarshal([]byte(byteValue), &data)
 
-	sortedTuple := make([]MyTuple, 0, 100)
+	sortedTuple := make([]MyTuple, 0, 1000)
 
 	validOperations := 0
 	for key, element := range data {
