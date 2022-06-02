@@ -23,10 +23,15 @@ func close_program() {
 }
 
 func make_operation(operator string, args ...float64) float64 {
-	var result float64 = 0.0
+	var result float64 = math.NaN()
 	if operator == "add" && len(args) == 2 {
 		result = args[0] + args[1]
 		// fmt.Printf("[DEBUG] %v + %v = %v\n", args[0], args[1], result)
+		return result
+	}
+	if operator == "sub" && len(args) == 2 {
+		result = args[0] - args[1]
+		// fmt.Printf("[DEBUG] %v - %v = %v\n", args[0], args[1], result)
 		return result
 	}
 	if operator == "mul" && len(args) == 2 {
@@ -43,13 +48,21 @@ func make_operation(operator string, args ...float64) float64 {
 }
 
 func main() {
-	jsonFileName := "input.json"
+	scanner := bufio.NewScanner(os.Stdin)
+	fmt.Println("[INFO] If left empty, program will search for \"input.json\" file.")
+	fmt.Printf("Enter a valid path to the input file: ")
+	scanner.Scan()
+	jsonFileName := scanner.Text()
+	if jsonFileName == "" {
+		jsonFileName = "input.json"
+		fmt.Printf("[INFO] Left empty, searching for \"%v\" file.\n", jsonFileName)
+	}
 	outputFileName := "output.txt"
 
 	jsonFile, err := os.Open(jsonFileName)
 
 	if err != nil {
-		msg := fmt.Sprintf("[ERROR] Could not find %v file. Program will exit.\n",
+		msg := fmt.Sprintf("[ERROR] Could not find \"%v\" file. Program will exit.\n",
 			jsonFileName)
 		fmt.Printf(msg)
 		close_program()
@@ -65,7 +78,7 @@ func main() {
 
 	sortedTuple := make([]MyTuple, 0, 100)
 
-	validOperators := 0
+	validOperations := 0
 	for key, element := range data {
 		operator, _ := element["operator"].(string)
 		arg1, ok1 := element["value1"].(float64)
@@ -73,24 +86,26 @@ func main() {
 
 		// searching if operator name is allowed
 		var ok_operator bool
-		for _, e := range []string{"add", "mul", "sqrt"} {
+		for _, e := range []string{"add", "sub", "mul", "sqrt"} {
 			if e == operator {
 				ok_operator = true
-				validOperators++
 				break
 			}
 		}
 
 		// if operator is allowed than operation can be made
 		if ok_operator {
-			var result float64
+			var result float64 = math.NaN()
 			if ok1 && ok2 {
 				result = make_operation(operator, arg1, arg2)
 			}
-			if ok1 && !ok2 {
+			if ok1 && !ok2 && operator == "sqrt" {
 				result = make_operation(operator, arg1)
 			}
 
+			if !math.IsNaN(result) {
+				validOperations++
+			}
 			// fmt.Printf("%v: %v\n", key, result)
 			sortedTuple = append(sortedTuple, MyTuple{key, result})
 		}
@@ -125,7 +140,7 @@ func main() {
 	// 	fmt.Printf("[DEBUG] %v: %v\n", e.key, e.result)
 	// }
 
-	fmt.Printf("[INFO] Valid operators: %v (out of %v)\n", validOperators, len(data))
+	fmt.Printf("[INFO] Valid operations: %v (out of %v)\n", validOperations, len(data))
 
 	outputFile, err := os.Create(outputFileName)
 

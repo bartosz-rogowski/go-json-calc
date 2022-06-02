@@ -6,13 +6,15 @@
         "value3": 4
     },
     "obj2": {
-        "operator": "sqrt",
+        "operator": "sub",
         "value1": 16,
         "value2": 3
     },
     "obj3": {
-        "operator": "mul",
-        "value1": -20.2,
-        "value2": 3.5
+        "operator": "mul"
+    },
+    "obj4": {
+        "operator": "sub",
+        "value1": 16
     }
 }
